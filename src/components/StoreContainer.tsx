@@ -1,80 +1,31 @@
+import './index.css';
 
-import { useEffect, useState } from "react";
-import "./index.css";
-import { Product, QUANTITY_DIRECTION } from "../types";
-import { FilterSection } from "./Section/FilterSection";
-import { ProductsSection } from "./Section/ProductsSection";
-import { CartSection } from "./Section/CartSection";
-import { useStore } from "../store";
-
-const PRODUCTS_ENDPOINT = 'https://random-data-api.com/api/commerce/random_commerce?size=10'
+const PRODUCTS_ENDPOINT = 'https://random-data-api.com/api/commerce/random_commerce?size=10';
 
 function StoreContainer() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
-  const cart = useStore((state) => state.cart);
-  const setCart = useStore((state) => state.setCart);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const response = await fetch(PRODUCTS_ENDPOINT);
-      const fetchedProducts = await response.json();
-      setProducts(fetchedProducts);
-    }
-
-    if (products.length === 0) {
-      fetchProducts();
-    }
-  }, []);
-
-  const addOrEditProductInCart = (product: Product, quantity?: number) => {
-    const cartItemExists = cart.find(item => item.id === product.id)
-    let updatedCart = cart;
-
-    if (cartItemExists) {
-      // Remove from cart if quantity is 0
-      if (quantity === 0) {
-        updatedCart = cart.filter(item => item.id !== product.id)
-      } else {
-        // Update existing cart item with specified quantity or incremented value
-        updatedCart = cart.map(item =>
-          item.id === product.id ? { ...item, quantity: quantity || Number(item.quantity) + 1 } : item
-        );
-      }
-    } else {
-      // Create a new cart item
-      updatedCart = [...cart, {
-        id: product.id,
-        quantity: 1,
-        details: product,
-      }]
-    }
-    setCart(updatedCart)
-  }
-
-  const filterByTerm = (term: string) => {
-    const list = products.filter(function(product) {
-      return product.product_name.toLowerCase().includes(term.toLowerCase());
-    });
-
-    setFilteredProducts(term === '' ? [] : list);
-  }
-
-  const onUpdateCartItemQuantity = (product: Product, quantityDirection: QUANTITY_DIRECTION) => {
-    const cartItem = cart.find(item => item.id === product.id)
-
-    if (cartItem) {
-      addOrEditProductInCart(product, quantityDirection === QUANTITY_DIRECTION.DECREASE ? cartItem.quantity - 1 : cartItem.quantity + 1)
-    }
-  }
-
   return (
     <div className="store-container">
-      <FilterSection products={filteredProducts} onClickProductButton={addOrEditProductInCart} onChangeFilterTerm={filterByTerm} />
+      <div className="item-outer-container">
+        <p className="items-container-title">Filter (0)</p>
+        <div className="item-inner-container">
+          <p>Filter by name</p>
+          <input type="text" />
+          <p style={{ marginTop: '15px' }}>Show each product here that matches the search term</p>
+        </div>
+      </div>
 
-      <ProductsSection products={products} onClickProductButton={addOrEditProductInCart} />
+      <div className="item-outer-container">
+        <p className="items-container-title">Products (0)</p>
+        <div className="item-inner-container">Show all products from the API ({PRODUCTS_ENDPOINT})</div>
+      </div>
 
-      <CartSection cart={cart} onClickDecreaseQuantity={(product) => onUpdateCartItemQuantity(product, QUANTITY_DIRECTION.DECREASE)} onClickIncreaseQuantity={(product) => onUpdateCartItemQuantity(product, QUANTITY_DIRECTION.INCREASE)} />
+      <div className="item-outer-container">
+        <p className="items-container-title">Cart (0)</p>
+        <div className="item-inner-container">
+          Show all products added to the cart. Include the quantity for each item and provide a means to change the
+          quantity count as well as delete the item from the cart.
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,10 @@
-Ecommerce Shopping Site
-A number of L2W customers want to start building e-commerce training material. We thought it might help to have one they can practice with! Our goal is to build a basic e-commerce site that allows users to search for products and add products to a shopping cart.
+## React Basic E-Commerce App
 
+This file is the starting point for the React Basic E-Commerce App. This project is a simple e-commerce app that displays a list of products and allows users to add them to a shopping cart. It also includes a filtering feature that allows users to filter products by search term.
 
-We’re going to use the following endpoint to fetch our data:
+Use the following endpoint to fetch the products data:
 “https://random-data-api.com/api/commerce/random_commerce?size=10”
+
+### Stuck?
+
+Check out the [`main`](https://github.com/zeckdude/react-basic-ecommerce-app/tree/main) branch for a solution.
