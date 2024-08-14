@@ -1,26 +1,30 @@
 
 import { useEffect, useState } from "react";
 import "./index.css";
-import { CartItem, Product, QUANTITY_DIRECTION } from "../types";
+import { Product, QUANTITY_DIRECTION } from "../types";
 import { FilterSection } from "./Section/FilterSection";
 import { ProductsSection } from "./Section/ProductsSection";
 import { CartSection } from "./Section/CartSection";
+import { useStore } from "../store";
+
+const PRODUCTS_ENDPOINT = 'https://random-data-api.com/api/commerce/random_commerce?size=10'
 
 function StoreContainer() {
   const [products, setProducts] = useState<Product[]>([])
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
-  const [cart, setCart] = useState<CartItem[]>([])
-
-  console.log('products', products)
+  const cart = useStore((state) => state.cart);
+  const setCart = useStore((state) => state.setCart);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await fetch("https://random-data-api.com/api/commerce/random_commerce?size=10");
+      const response = await fetch(PRODUCTS_ENDPOINT);
       const fetchedProducts = await response.json();
       setProducts(fetchedProducts);
     }
 
-    fetchProducts()
+    if (products.length === 0) {
+      fetchProducts();
+    }
   }, []);
 
   const addOrEditProductInCart = (product: Product, quantity?: number) => {
